@@ -5,28 +5,50 @@
 #include "csapp.h"
 
 void ftp(int connfd) {
-    int f;
+    // rio_t rio;
     // size_t n;
-    char buf[MAXLINE];
+    int f;
     int t_nomf, code_sortie;
-    rio_t rio;
     struct stat stat_f;
     off_t buf_off;
 
     // Intialise la lecture du socket
-    Rio_readinitb(&rio, connfd);
+    // Rio_readinitb(&rio, connfd);
+
     // Recupère la taille du nom de fichier
-    Rio_readlineb(&rio, &t_nomf, sizeof(int));
+    Rio_readn(connfd, &t_nomf, sizeof(int));
+    fprintf(stderr, "%d\n", t_nomf);
     // Recupère le contenue du socket
-    Rio_readlineb(&rio, buf, t_nomf);
+    char *buf = Malloc(sizeof(char)*t_nomf);
+    Rio_readn(connfd, buf, t_nomf);
+
+    fprintf(stderr, "aaaaaaaaaaaaaaaaaaa\n");
+    fprintf(stderr, "%s\n", buf);
+    fprintf(stderr, "bbbbbbbbbbbbbbbbbbb\n");
 
     while ((f = open(buf, O_RDONLY, 0)) < 0){ /* le fichier n'existe pas */
         code_sortie = 1;
         Rio_writen(connfd, &code_sortie, sizeof(int));
-        Rio_readlineb(&rio, buf, MAXLINE);
+
+
+        // Recupère la taille du nom de fichier
+        Rio_readn(connfd, &t_nomf, sizeof(int));
+        fprintf(stderr, "%d\n", t_nomf);
+        // Recupère le contenue du socket
+        char *buf = Malloc(sizeof(char)*t_nomf);
+        Rio_readn(connfd, buf, t_nomf);
+
+        fprintf(stderr, "aaaaaaaaaaaaaaaaaaa\n");
+        fprintf(stderr, "%s\n", buf);
+        fprintf(stderr, "bbbbbbbbbbbbbbbbbbb\n");
+
+
     }
+
     code_sortie = 0;
     Rio_writen(connfd, &code_sortie, sizeof(int));
+
+    Free(buf);
 
     // Recupere status fichier
     fstat(f,&stat_f);

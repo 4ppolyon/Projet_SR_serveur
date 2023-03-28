@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     int clientfd, port;
     char *host, buf[MAXLINE];
     off_t buf_off;
-    rio_t rio;
+    // rio_t rio;
 
     /*
      * Note that the 'host' can be a name or an IP address.
@@ -29,22 +29,22 @@ int main(int argc, char **argv)
      */
     printf("client connected to server OS\n"); 
     
-    Rio_readinitb(&rio, clientfd);
+    // Rio_readinitb(&rio, clientfd);
 
     while (Fgets(buf, MAXLINE, stdin) != NULL) {
         t_nomf=strlen(buf)-1;
         Rio_writen(clientfd, &t_nomf, sizeof(int));
         Rio_writen(clientfd, buf, t_nomf);
-        if (Rio_readlineb(&rio, buf, sizeof(int)) > 0) {
+        if (Rio_readn(clientfd, buf, sizeof(int)) > 0) {
             // modulariser le switch (fonction qui retourne 0 quand ok)
             switch(*buf){
                 case 1 :
                     fprintf(stderr,"Erreur fichier\n");
                     break;
                 default :
-                    Rio_readlineb(&rio, &buf_off, sizeof(off_t));
+                    Rio_readn(clientfd, &buf_off, sizeof(off_t));
                     void *contenu = Malloc(buf_off);
-                    Rio_readlineb(&rio, contenu ,buf_off);
+                    Rio_readn(clientfd, contenu ,buf_off);
                     int f = Open("nom_fichier", O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH); ////////// recupe le nom du fichier
                     //// faire un write dans le fichier
                     Rio_writen(f, contenu, buf_off);
