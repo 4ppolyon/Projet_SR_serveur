@@ -2,15 +2,17 @@
  * echoclient.c - An echo client
  */
 #include "csapp.h"
+#include <stdio.h>
+#include <string.h>
 
 int main(int argc, char **argv)
 {
     int t_nomf;
     int code_sortie;
     int clientfd, port;
-    char *host, buf[MAXLINE];
+    char *host, buf[MAXLINE], path[MAXLINE];
     off_t buf_off;
-    // rio_t rio;
+    strcpy(path,"./client_file/");
 
     /*
      * Note that the 'host' can be a name or an IP address.
@@ -45,7 +47,8 @@ int main(int argc, char **argv)
                     Rio_readn(clientfd, &buf_off, sizeof(off_t));
                     void *contenu = Malloc(buf_off);
                     Rio_readn(clientfd, contenu ,buf_off);
-                    int f = Open("nom_fichier", O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH); ////////// recupe le nom du fichier
+                    strcat(path,buf);
+                    int f = Open(path, O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH); ////////// recupe le nom du fichier
                     //// faire un write dans le fichier
                     Rio_writen(f, contenu, buf_off);
                     Close(f);
