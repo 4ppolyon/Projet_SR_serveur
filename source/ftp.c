@@ -6,11 +6,12 @@
 
 void ftp(int connfd) {
     int f;
-    size_t n;
+    // size_t n;
     char buf[MAXLINE];
     int code_sortie;
     rio_t rio;
     struct stat stat_f;
+    off_t buf_off;
 
     // Intialise la lecture du socket
     Rio_readinitb(&rio, connfd);
@@ -27,13 +28,14 @@ void ftp(int connfd) {
 
     // Recupere status fichier
     fstat(f,&stat_f);
-    void *contenu = Malloc(stat_f.st_size);
+    buf_off = stat_f.st_size;
+    void *contenu = Malloc(buf_off);
     // envoie la taille du fichier
-    Rio_writen(connfd, stat_f.st_size, sizeof(off_t));
+    Rio_writen(connfd, &buf_off, sizeof(off_t));
     // lit le contenu du fichier
-    Rio_readnb(f, contenu, stat_f.st_size);
+    Rio_readn(f, contenu, buf_off);
     // envoie le contenu du fichier
-    Rio_writen(connfd, contenu, stat_f.st_size);
+    Rio_writen(connfd, contenu, buf_off);
     Free(contenu);
 
 //     while ((n = Rio_readlineb(&rio, buf, MAXLINE)) != 0) {
