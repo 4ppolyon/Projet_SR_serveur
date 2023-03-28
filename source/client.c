@@ -3,10 +3,12 @@
  */
 #include "csapp.h"
 #include <stdio.h>
+#include <string.h>
 
 int main(int argc, char **argv)
 {
     int t_nomf;
+    int code_sortie;
     int clientfd, port;
     char *host, buf[MAXLINE];
     off_t buf_off;
@@ -35,9 +37,9 @@ int main(int argc, char **argv)
         t_nomf=strlen(buf)-1;
         Rio_writen(clientfd, &t_nomf, sizeof(int));
         Rio_writen(clientfd, buf, t_nomf);
-        if (Rio_readn(clientfd, buf, sizeof(int)) > 0) {
+        if (Rio_readn(clientfd, &code_sortie, sizeof(int)) > 0) {
             // modulariser le switch (fonction qui retourne 0 quand ok)
-            switch(*buf){
+            switch(code_sortie){
                 case 1 :
                     fprintf(stderr,"Erreur fichier\n");
                     break;
@@ -45,7 +47,7 @@ int main(int argc, char **argv)
                     Rio_readn(clientfd, &buf_off, sizeof(off_t));
                     void *contenu = Malloc(buf_off);
                     Rio_readn(clientfd, contenu ,buf_off);
-                    int f = Open("nom_fichier", O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH); ////////// recupe le nom du fichier
+                    int f = Open(buf, O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH); ////////// recupe le nom du fichier
                     //// faire un write dans le fichier
                     Rio_writen(f, contenu, buf_off);
                     Close(f);
