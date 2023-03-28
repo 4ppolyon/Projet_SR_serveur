@@ -12,9 +12,11 @@ pid_t L_fils[NB_FILS];
 void ftp(int connfd);
 
 void SIGINT_handler(int sig){
-    while (test_prc!=NULL){
-        Kill(test_prc->pid, SIGINT);
+    for(int i = 0; i < NB_FILS; i++){
+        Kill(L_fils[i], SIGINT);
     }
+    while(wait(NULL) > 0);
+    exit(0);
 }
 
 void child_handler(int sig){
@@ -49,7 +51,7 @@ int main(int argc, char **argv){
 
     PID_pere=getpid();
 
-    for(int i = 0; i<50; i++){
+    for(int i = 0; i < NB_FILS; i++){
         if ((L_fils[i]=Fork())!=0){
             break;
         }
