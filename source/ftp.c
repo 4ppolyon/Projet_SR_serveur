@@ -8,17 +8,19 @@ void ftp(int connfd) {
     int f;
     // size_t n;
     char buf[MAXLINE];
-    int code_sortie;
+    int t_nomf, code_sortie;
     rio_t rio;
     struct stat stat_f;
     off_t buf_off;
 
     // Intialise la lecture du socket
     Rio_readinitb(&rio, connfd);
+    // Recupère la taille du nom de fichier
+    Rio_readlineb(&rio, &t_nomf, sizeof(int));
     // Recupère le contenue du socket
-    Rio_readlineb(&rio, buf, MAXLINE);
+    Rio_readlineb(&rio, buf, t_nomf);
 
-    while ((f = Open(buf, O_RDONLY, 0)) < 0){ /* le fichier n'existe pas */
+    while ((f = open(buf, O_RDONLY, 0)) < 0){ /* le fichier n'existe pas */
         code_sortie = 1;
         Rio_writen(connfd, &code_sortie, sizeof(int));
         Rio_readlineb(&rio, buf, MAXLINE);

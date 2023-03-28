@@ -5,6 +5,7 @@
 
 int main(int argc, char **argv)
 {
+    int t_nomf;
     int clientfd, port;
     char *host, buf[MAXLINE];
     off_t buf_off;
@@ -30,7 +31,9 @@ int main(int argc, char **argv)
     Rio_readinitb(&rio, clientfd);
 
     while (Fgets(buf, MAXLINE, stdin) != NULL) {
-        Rio_writen(clientfd, buf, strlen(buf));
+        t_nomf=strlen(buf);
+        Rio_writen(clientfd, &t_nomf, sizeof(int));
+        Rio_writen(clientfd, buf, t_nomf);
         if (Rio_readlineb(&rio, buf, sizeof(int)) > 0) {
             // modulariser le switch (fonction qui retourne 0 quand ok)
             switch(*buf){
