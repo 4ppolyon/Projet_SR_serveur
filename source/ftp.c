@@ -11,7 +11,8 @@ void ftp(int connfd) {
     int t_nomf, code_sortie;
     struct stat stat_f;
     off_t buf_off;
-    char *buf;
+    char *buf, path[MAXLINE];
+    strcpy(path,"./serveur_file/");
     // Intialise la lecture du socket
     // Rio_readinitb(&rio, connfd);
 
