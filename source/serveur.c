@@ -37,8 +37,7 @@ int main(int argc, char **argv){
     pid_t PID_pere;
     socklen_t clientlen;
     struct sockaddr_in clientaddr;
-    char client_ip_string[INET_ADDRSTRLEN];
-    char client_hostname[MAX_NAME_LEN];
+    char client_ip_string[INET_ADDRSTRLEN], client_hostname[MAX_NAME_LEN];
     
     Signal(SIGCHLD, child_handler);
     Signal(SIGINT, SIGINT_handler);
