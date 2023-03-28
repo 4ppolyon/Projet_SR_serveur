@@ -19,7 +19,7 @@ void ftp(int connfd) {
     Rio_readn(connfd, &t_nomf, sizeof(int));
     fprintf(stderr, "%d\n", t_nomf);
     // Recupère le contenue du socket
-    char *buf = Malloc(sizeof(char)*t_nomf);
+    char *buf = Malloc(sizeof(char)*t_nomf!);
     Rio_readn(connfd, buf, t_nomf);
 
     fprintf(stderr, "aaaaaaaaaaaaaaaaaaa\n");

@@ -6,6 +6,7 @@
 int main(int argc, char **argv)
 {
     int t_nomf;
+    int code_sortie;
     int clientfd, port;
     char *host, buf[MAXLINE];
     off_t buf_off;
@@ -34,9 +35,9 @@ int main(int argc, char **argv)
         t_nomf=strlen(buf)-1;
         Rio_writen(clientfd, &t_nomf, sizeof(int));
         Rio_writen(clientfd, buf, t_nomf);
-        if (Rio_readn(clientfd, buf, sizeof(int)) > 0) {
+        if (Rio_readn(clientfd, &code_sortie, sizeof(int)) > 0) {
             // modulariser le switch (fonction qui retourne 0 quand ok)
-            switch(*buf){
+            switch(code_sortie){
                 case 1 :
                     fprintf(stderr,"Erreur fichier\n");
                     break;
