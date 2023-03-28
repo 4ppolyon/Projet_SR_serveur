@@ -2,6 +2,7 @@
  * echoclient.c - An echo client
  */
 #include "csapp.h"
+#include <stdio.h>
 
 int main(int argc, char **argv)
 {
@@ -31,7 +32,7 @@ int main(int argc, char **argv)
     Rio_readinitb(&rio, clientfd);
 
     while (Fgets(buf, MAXLINE, stdin) != NULL) {
-        t_nomf=strlen(buf);
+        t_nomf=strlen(buf)-1;
         Rio_writen(clientfd, &t_nomf, sizeof(int));
         Rio_writen(clientfd, buf, t_nomf);
         if (Rio_readlineb(&rio, buf, sizeof(int)) > 0) {
@@ -46,7 +47,7 @@ int main(int argc, char **argv)
                     Rio_readlineb(&rio, contenu ,buf_off);
                     int f = Open("nom_fichier", O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH); ////////// recupe le nom du fichier
                     //// faire un write dans le fichier
-                    Rio_writen(f, buf, strlen(buf));
+                    Rio_writen(f, contenu, buf_off);
                     Close(f);
                     Free(contenu);
             }
