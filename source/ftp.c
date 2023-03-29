@@ -8,7 +8,8 @@ void ftp(int connfd) {
     // rio_t rio;
     // size_t n;
     int f;
-    int t_nomf, code_sortie;
+    int code_sortie;
+    size_t t_nomf;
     struct stat stat_f;
     off_t buf_off;
     char *buf, path[MAXLINE];
@@ -17,11 +18,13 @@ void ftp(int connfd) {
     // Rio_readinitb(&rio, connfd);
 
     // Recupère la taille du nom de fichier
-    Rio_readn(connfd, &t_nomf, sizeof(int));
-    fprintf(stderr, "%d\n", t_nomf);
+    Rio_readn(connfd, &t_nomf, sizeof(size_t));
+    fprintf(stderr, "%ld\n", t_nomf);
     // Recupère le contenue du socket
-    buf = Malloc(sizeof(char)*t_nomf);
-    Rio_readn(connfd, buf, t_nomf);
+    buf = Calloc(t_nomf,sizeof(char)*t_nomf);
+    Rio_readn(connfd, buf, sizeof(char)*t_nomf);
+    fprintf(stderr, "buf : %ld\n", strlen(buf));    
+    fprintf(stderr, "%s\n", buf);
     
     fprintf(stderr, "aaaaaaaaaaaaaaaaaaa\n");
     fprintf(stderr, "%s\n", buf);
@@ -34,11 +37,12 @@ void ftp(int connfd) {
         Free(buf);
 
         // Recupère la taille du nom de fichier
-        Rio_readn(connfd, &t_nomf, sizeof(int));
-        fprintf(stderr, "%d\n", t_nomf);
+        Rio_readn(connfd, &t_nomf, sizeof(size_t));
+        fprintf(stderr, "%ld\n", t_nomf);
         // Recupère le contenue du socket
-        buf = Malloc(sizeof(char)*t_nomf);
-        Rio_readn(connfd, buf, t_nomf);
+        buf = Calloc(t_nomf,sizeof(char)*t_nomf);
+        Rio_readn(connfd, buf, sizeof(char)*t_nomf);
+        fprintf(stderr, "%ld\n", strlen(buf));
 
         fprintf(stderr, "aaaaaaaaaaaaaaaaaaa\n");
         fprintf(stderr, "%s\n", buf);

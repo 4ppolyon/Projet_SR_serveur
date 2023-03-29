@@ -7,7 +7,7 @@
 
 int main(int argc, char **argv)
 {
-    int t_nomf;
+    size_t t_nomf;
     int code_sortie;
     int clientfd, port;
     char *host, buf[MAXLINE], path[MAXLINE];
@@ -19,7 +19,7 @@ int main(int argc, char **argv)
      * If necessary, Open_clientfd will perform the name resolution
      * to obtain the IP address.
      */
-    host = "f212-04";
+    host = "f214-06";
     port = 2112;
 
     clientfd = Open_clientfd(host, port);
@@ -35,7 +35,7 @@ int main(int argc, char **argv)
 
     while (Fgets(buf, MAXLINE, stdin) != NULL) {
         t_nomf=strlen(buf)-1;
-        Rio_writen(clientfd, &t_nomf, sizeof(int));
+        Rio_writen(clientfd, &t_nomf, sizeof(size_t));
         Rio_writen(clientfd, buf, t_nomf);
         if (Rio_readn(clientfd, &code_sortie, sizeof(int)) > 0) {
             // modulariser le switch (fonction qui retourne 0 quand ok)
