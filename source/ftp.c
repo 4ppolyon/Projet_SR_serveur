@@ -12,7 +12,6 @@ void ftp(int connfd) {
     struct stat stat_f;
     off_t buf_off;
     char *buf, path[MAXLINE];
-    strcpy(path,"./serveur_file/");
     // Intialise la lecture du socket
     // Rio_readinitb(&rio, connfd);
 
