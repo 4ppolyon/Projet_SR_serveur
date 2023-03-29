@@ -57,6 +57,7 @@ int main(int argc, char **argv)
                     void *contenu = Malloc(buf_off);
                     Rio_readn(clientfd, contenu ,buf_off);
                     strcat(path,buf);
+                    fprintf(stderr,"%s",path);
                     f = Open(path, O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH); ////////// recupe le nom du fichier
                     strcpy(path,"./client_file/");
                     //// faire un write dans le fichier
