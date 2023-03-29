@@ -63,7 +63,6 @@ int main(int argc, char **argv)
                     Rio_writen(f, contenu, buf_off);
                     Close(f);
                     Free(contenu);
-                    sleep(1);
                     gettimeofday(&end, NULL);
                     printf("time spent: %0.8f sec\n",time_diff(&start, &end));
             }

@@ -3,9 +3,12 @@
  */
 
 #include "csapp.h"
+#include "ftp.h"
 
 #define MAX_NAME_LEN 256
-#define NB_FILS 10
+#define NB_FILS 1
+
+extern int client_down;
 
 pid_t L_fils[NB_FILS];
 
@@ -17,6 +20,10 @@ void SIGINT_handler(int sig){
     }
     while(wait(NULL) > 0);
     exit(0);
+}
+
+void SIGPIPE_handler(int sig){
+    client_down = 1;
 }
 
 void child_handler(int sig){
@@ -57,9 +64,13 @@ int main(int argc, char **argv){
     }
 
     if (getpid()!=PID_pere){
+
+        Signal(SIGPIPE,SIGPIPE_handler);
+
         while (1) {
             // Vérifie que la connexion est réaliser
             while((connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen)) == -1);
+            client_down = 0;
             
             /* determine the name of the client */
             Getnameinfo((SA *) &clientaddr, clientlen,
@@ -69,9 +80,8 @@ int main(int argc, char **argv){
             Inet_ntop(AF_INET, &clientaddr.sin_addr, client_ip_string,
                     INET_ADDRSTRLEN);
             
-            printf("server connected to %s (%s)\n", client_hostname,
-                client_ip_string);
-            
+            printf("server connected to %s (%s)\n", client_hostname, client_ip_string);
+
             ftp(connfd);
             Close(connfd);
         }
