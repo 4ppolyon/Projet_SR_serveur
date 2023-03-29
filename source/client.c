@@ -5,13 +5,21 @@
 #include <stdio.h>
 #include <string.h>
 
-int main(int argc, char **argv){
+float time_diff(struct timeval *start, struct timeval *end)
+{
+    return (end->tv_sec - start->tv_sec) + 1e-6*(end->tv_usec - start->tv_usec);
+}
 
+int main(int argc, char **argv){
     size_t t_nomf;
+    
     int code_sortie;
     int f, clientfd, port;
     char *host, buf[MAXLINE], path[MAXLINE];
     off_t buf_off;
+    struct timeval start;
+    struct timeval end;
+    strcpy(path,"./client_file/");
 
     /*
      * Note that the 'host' can be a name or an IP address.
@@ -51,6 +59,7 @@ int main(int argc, char **argv){
                     fprintf(stderr,"Erreur fichier\n");
                     break;
                 default :
+                    gettimeofday(&start, NULL);
                     Rio_readn(clientfd, &buf_off, sizeof(off_t));
                     void *contenu = Malloc(buf_off);
                     Rio_readn(clientfd, contenu ,buf_off);
@@ -60,6 +69,8 @@ int main(int argc, char **argv){
                     Rio_writen(f, contenu, buf_off);
                     Close(f);
                     Free(contenu);
+                    gettimeofday(&end, NULL);
+                    printf("Success :\ntime spent: %0.8f sec\nweight = %ld octet(s)\n",time_diff(&start, &end),buf_off);
             }
         } else { /* the server has prematurely closed the connection */
             break;
