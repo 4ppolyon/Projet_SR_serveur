@@ -6,13 +6,12 @@
 #include <string.h>
 
 int main(int argc, char **argv){
-    
+
     size_t t_nomf;
     int code_sortie;
     int f, clientfd, port;
     char *host, buf[MAXLINE], path[MAXLINE];
     off_t buf_off;
-    strcpy(path,"./client_file/");
 
     /*
      * Note that the 'host' can be a name or an IP address.
@@ -33,14 +32,22 @@ int main(int argc, char **argv){
     
     // Rio_readinitb(&rio, clientfd);
 
-    while (Fgets(buf, MAXLINE, stdin) != NULL) {
-        t_nomf=strlen(buf)-1;
+    while (fscanf(stdin, "%s", buf) != EOF) {
+
+        //Initialise le chemin de dépot des fichiers
+        strcpy(path,"./client_file/");
+
+        t_nomf=strlen(buf);
         Rio_writen(clientfd, &t_nomf, sizeof(size_t));
         Rio_writen(clientfd, buf, t_nomf);
+
         if (Rio_readn(clientfd, &code_sortie, sizeof(int)) > 0) {
             // modulariser le switch (fonction qui retourne 0 quand ok)
             switch(code_sortie){
                 case 1 :
+                    fprintf(stderr,"Ecriver un nom de fichier\n");
+                    break;
+                case 2 :
                     fprintf(stderr,"Erreur fichier\n");
                     break;
                 default :
@@ -49,7 +56,6 @@ int main(int argc, char **argv){
                     Rio_readn(clientfd, contenu ,buf_off);
                     strcat(path,buf);
                     f = Open(path, O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH); ////////// recupe le nom du fichier
-                    strcpy(path,"./client_file/");
                     //// faire un write dans le fichier
                     Rio_writen(f, contenu, buf_off);
                     Close(f);
