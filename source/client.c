@@ -5,11 +5,11 @@
 #include <stdio.h>
 #include <string.h>
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv){
+    
     size_t t_nomf;
     int code_sortie;
-    int clientfd, port;
+    int f, clientfd, port;
     char *host, buf[MAXLINE], path[MAXLINE];
     off_t buf_off;
     strcpy(path,"./client_file/");
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
                     void *contenu = Malloc(buf_off);
                     Rio_readn(clientfd, contenu ,buf_off);
                     strcat(path,buf);
-                    int f = Open(path, O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH); ////////// recupe le nom du fichier
+                    f = Open(path, O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH); ////////// recupe le nom du fichier
                     strcpy(path,"./client_file/");
                     //// faire un write dans le fichier
                     Rio_writen(f, contenu, buf_off);
