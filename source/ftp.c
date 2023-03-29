@@ -21,7 +21,8 @@ void ftp(int connfd) {
     buf = Calloc(t_nomf,sizeof(char)*t_nomf);
     Rio_readn(connfd, buf, sizeof(char)*t_nomf);
 
-    while ((f = open(buf, O_RDONLY, 0)) < 0){ /* le fichier n'existe pas */
+    strcat(path,buf);
+    while ((f = open(path, O_RDONLY, 0)) < 0){ /* le fichier n'existe pas */
         code_sortie = 1;
         Rio_writen(connfd, &code_sortie, sizeof(int));
         Free(buf);
