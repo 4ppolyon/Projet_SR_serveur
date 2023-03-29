@@ -30,7 +30,8 @@ void ftp(int connfd) {
         // Recupère la taille du nom de fichier
         Rio_readn(connfd, &t_nomf, sizeof(size_t));
         // Recupère le contenue du socket
-        buf = Calloc(t_nomf,sizeof(char)*t_nomf);
+        buf
+         = Calloc(t_nomf,sizeof(char)*t_nomf);
         Rio_readn(connfd, buf, sizeof(char)*t_nomf);
     }
 
@@ -51,4 +52,3 @@ void ftp(int connfd) {
     Free(contenu);
     
 }
-

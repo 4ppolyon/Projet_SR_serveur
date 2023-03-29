@@ -5,13 +5,21 @@
 #include <stdio.h>
 #include <string.h>
 
+float time_diff(struct timeval *start, struct timeval *end)
+{
+    return (end->tv_sec - start->tv_sec) + 1e-6*(end->tv_usec - start->tv_usec);
+}
+
 int main(int argc, char **argv)
 {
     size_t t_nomf;
+    
     int code_sortie;
-    int clientfd, port;
+    int f, clientfd, port;
     char *host, buf[MAXLINE], path[MAXLINE];
     off_t buf_off;
+    struct timeval start;
+    struct timeval end;
     strcpy(path,"./client_file/");
 
     /*
@@ -19,7 +27,7 @@ int main(int argc, char **argv)
      * If necessary, Open_clientfd will perform the name resolution
      * to obtain the IP address.
      */
-    host = "f214-06";
+    host = "f214-07";
     port = 2112;
 
     clientfd = Open_clientfd(host, port);
@@ -44,16 +52,20 @@ int main(int argc, char **argv)
                     fprintf(stderr,"Erreur fichier\n");
                     break;
                 default :
+                    gettimeofday(&start, NULL);
                     Rio_readn(clientfd, &buf_off, sizeof(off_t));
                     void *contenu = Malloc(buf_off);
                     Rio_readn(clientfd, contenu ,buf_off);
                     strcat(path,buf);
-                    int f = Open(path, O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH); ////////// recupe le nom du fichier
+                    f = Open(path, O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH); ////////// recupe le nom du fichier
                     strcpy(path,"./client_file/");
                     //// faire un write dans le fichier
                     Rio_writen(f, contenu, buf_off);
                     Close(f);
                     Free(contenu);
+                    sleep(1);
+                    gettimeofday(&end, NULL);
+                    printf("time spent: %0.8f sec\n",time_diff(&start, &end));
             }
         } else { /* the server has prematurely closed the connection */
             break;
