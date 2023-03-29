@@ -64,7 +64,7 @@ int main(int argc, char **argv)
                     Close(f);
                     Free(contenu);
                     gettimeofday(&end, NULL);
-                    printf("Success :\ntime spent: %0.8f sec\nweight = %d",time_diff(&start, &end),buf_off);
+                    printf("Success :\ntime spent: %0.8f sec\nweight = %ld octet(s)\n",time_diff(&start, &end),buf_off);
             }
         } else { /* the server has prematurely closed the connection */
             break;
