@@ -5,7 +5,7 @@
 #include "csapp.h"
 
 #define MAX_NAME_LEN 256
-#define NB_FILS 50
+#define NB_FILS 10
 
 pid_t L_fils[NB_FILS];
 
@@ -29,7 +29,7 @@ void child_handler(int sig){
 
 /* 
  * Note that this code only works with IPv4 addresses
- * (IPv6 is not supported)
+ *
  */
 int main(int argc, char **argv){
 
