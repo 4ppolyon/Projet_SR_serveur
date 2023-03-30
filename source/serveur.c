@@ -82,10 +82,13 @@ int main(int argc, char **argv){
             
             printf("server connected to %s (%s)\n", client_hostname, client_ip_string);
 
+            // Gestion demande
             ftp(connfd);
+
             Close(connfd);
         }
     }else{
+        printf("Ready\n");
         while(1){
             pause();
         }
