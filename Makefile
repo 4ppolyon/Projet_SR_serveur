@@ -25,7 +25,7 @@ OBJPATH=objet
 # Variable pour les cibles et la récupération des fichiers
 SRCS=$(wildcard $(SRCPATH)/*.c)
 # OBJS=$(SRCS:$(SRCPATH)/%.c=$(OBJPATH)/%.o)
-OBJS=$(OBJPATH)/ftp.o $(OBJPATH)/csapp.o
+OBJS=$(OBJPATH)/ftp.o $(OBJPATH)/csapp.o $(OBJPATH)/f_client.o
 INCLUDE = $(wildcard $(HDRPATH)/*.c)
 EXEC_cli=$(BINPATH)/client 
 EXEC_serv=$(BINPATH)/serveur
