@@ -18,7 +18,7 @@ int main(int argc, char **argv){
      * If necessary, Open_clientfd will perform the name resolution
      * to obtain the IP address.
      */
-    host = "f217-02";
+    host = "f217-01";
     port = 2112;
 
     clientfd = Open_clientfd(host, port);
