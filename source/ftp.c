@@ -4,9 +4,17 @@
 #include <sys/stat.h>
 #include "csapp.h"
 
+
+            //test si c'est un repertoire
+            // if (stat_f.st_mode == S_IFDIR){
+            //     continue;
+            // }
 int client_down;
 
 void ftp(int connfd) {
+
+    off_t contenu_rest, t_bloc = 1000000; // Bloc de 1 Mo
+    int nb_bloc;
 
     int f;
     int code_sortie;
@@ -14,7 +22,7 @@ void ftp(int connfd) {
     struct stat stat_f;
     off_t buf_off;
     char *buf, path[MAXLINE];
-    void *contenu;
+    void *contenu, *bloc;
 
     while (1){ /* le fichier n'existe pas */
         strcpy(path,"./serveur_file/");
@@ -44,20 +52,30 @@ void ftp(int connfd) {
             // Recupere status fichier
             fstat(f,&stat_f);
             buf_off = stat_f.st_size;
-            contenu = Malloc(buf_off);
-
-            //test si c'est un repertoire
-            // if (stat_f.st_mode == S_IFDIR){
-            //     continue;
-            // }
-            
             // envoie la taille du fichier
             Rio_writen(connfd, &buf_off, sizeof(off_t));
-            // lit le contenu du fichier
-            Rio_readn(f, contenu, buf_off);
-            // envoie le contenu du fichier
-            Rio_writen(connfd, contenu, buf_off);
+
+            // Calcul du nombre de blocs et du contenu restant 
+            nb_bloc = buf_off/t_bloc;
+            contenu_rest = buf_off-(nb_bloc*t_bloc);
+
+            // Envoi des blocs
+            bloc = Malloc(t_bloc);
+            for (int i = 0; i<nb_bloc; i++){
+                // lit le contenu du fichier dans un bloc
+                Rio_readn(f, bloc, t_bloc);    
+                // envoie le contenu du bloc
+                Rio_writen(connfd, bloc, t_bloc);
+            }
+
+            contenu = Malloc(contenu_rest);
+            // lit le reste du contenu du fichier
+            Rio_readn(f, contenu, contenu_rest);
+            // envoie le reste du contenu du fichier
+            Rio_writen(connfd, contenu, contenu_rest);
+            
             Free(contenu);
+            Free(bloc);
         }
     }
 

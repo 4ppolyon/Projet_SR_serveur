@@ -11,7 +11,7 @@ int main(int argc, char **argv){
     size_t t_nomf;
     int code_sortie;
     int clientfd, port;
-    char *host, buf[MAXLINE], path[MAXLINE];
+    char *host, buf[MAXLINE];
 
     /*
      * Note that the 'host' can be a name or an IP address.
@@ -32,9 +32,6 @@ int main(int argc, char **argv){
 
     while (fscanf(stdin, "%s", buf) != EOF) {
 
-        //Initialise le chemin de dépot des fichiers
-        strcpy(path,"./client_file/");
-
         // Envoie la taille du nom de fichier puis le nom de fichier
         t_nomf=strlen(buf);
         Rio_writen(clientfd, &t_nomf, sizeof(size_t));
@@ -43,8 +40,7 @@ int main(int argc, char **argv){
         if (Rio_readn(clientfd, &code_sortie, sizeof(int)) > 0) {
 
             if (gest_erreur(code_sortie) == 0){
-                strcat(path,buf);
-                recuperation_fichier(clientfd, path);
+                recuperation_fichier(clientfd, buf);
             }
 
         } else { /* the server has prematurely closed the connection */

@@ -48,6 +48,7 @@ int main(int argc, char **argv){
     
     Signal(SIGCHLD, child_handler);
     Signal(SIGINT, SIGINT_handler);
+    Signal(SIGPIPE,SIGPIPE_handler);
     
     port = 2112;
 
@@ -65,7 +66,6 @@ int main(int argc, char **argv){
 
     if (getpid()!=PID_pere){
 
-        Signal(SIGPIPE,SIGPIPE_handler);
 
         while (1) {
             // Vérifie que la connexion est réaliser
