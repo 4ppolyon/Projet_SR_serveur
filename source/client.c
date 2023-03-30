@@ -1,6 +1,3 @@
-/*
- * echoclient.c - An echo client
- */
 #include "csapp.h"
 #include <stdio.h>
 #include <string.h>
@@ -26,7 +23,7 @@ int main(int argc, char **argv){
      * If necessary, Open_clientfd will perform the name resolution
      * to obtain the IP address.
      */
-    host = "f214-06";
+    host = "f217-02";
     port = 2112;
 
     clientfd = Open_clientfd(host, port);
@@ -70,7 +67,8 @@ int main(int argc, char **argv){
                     Close(f);
                     Free(contenu);
                     gettimeofday(&end, NULL);
-                    printf("Success :\ntime spent: %0.8f sec\nweight = %ld octet(s)\n",time_diff(&start, &end),buf_off);
+                    float t = time_diff(&start, &end);
+                    printf("Success :\ntime spent: %0.8f sec\nweight = %ld bytes\napprox speed = %f bytes/sec\n",t,buf_off, buf_off/t);
             }
         } else { /* the server has prematurely closed the connection */
             break;
