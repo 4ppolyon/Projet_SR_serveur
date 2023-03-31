@@ -5,7 +5,7 @@
 #include "csapp.h"
 
 
-            //test si c'est un repertoire
+            //// test si c'est un repertoire
             // if (stat_f.st_mode == S_IFDIR){
             //     continue;
             // }
@@ -54,6 +54,11 @@ void ftp(int connfd) {
             buf_off = stat_f.st_size;
             // envoie la taille du fichier
             Rio_writen(connfd, &buf_off, sizeof(off_t));
+
+            //Décalage si il y a déjà des element télécharger (peut etre egal à 0)
+            Rio_readn(connfd, decal, sizeof(off_t));  
+            Lseek(f,decal,SEEK_CUR);
+            buf_off = buf_off - decal;
 
             // Calcul du nombre de blocs et du contenu restant 
             nb_bloc = buf_off/t_bloc;

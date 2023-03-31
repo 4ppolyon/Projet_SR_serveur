@@ -29,7 +29,7 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
 
     int f;
     float t;
-    off_t buf_off;
+    off_t buf_off, decal;
     void *contenu, *bloc;
     struct timeval start;
     struct timeval end;
@@ -37,12 +37,23 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
     //Initialise le chemin de dépot de fichier masquer
     strcpy(path, "./client_file/.");
     strcat(path, nom_fichier);
+    if ((f = open(path, O_WRONLY, 0)) < 0){
+        f = Open(path, O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
+        decal = 0;
+    }else{
+        // Recupere la taille du fichier temporaire
+        fstat(f,&stat_f);
+        decal = stat_f.st_size;
+    }
 
-    f = Open(path, O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH); 
-
-    // Téléchargement du fichier
+    // Téléchargement de la taille du fichier
     gettimeofday(&start, NULL);
     Rio_readn(clientfd, &buf_off, sizeof(off_t));
+
+    //Décalage si il y a déjà des element télécharger (peut etre egal à 0)
+    Rio_writen(clientfd, decal, sizeof(off_t));
+    Lseek(f,decal,SEEK_CUR);
+    buf_off = buf_off - decal;
 
     // Calcul du nombre de bloc
     nb_bloc = buf_off/t_bloc;
