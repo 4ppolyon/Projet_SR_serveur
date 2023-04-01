@@ -61,7 +61,7 @@ int main(int argc, char **argv){
     Signal(SIGPIPE,SIGPIPE_handler);
     pid = 0;
     
-    port = 2112;
+    port = atoi(argv[1]);
 
     clientlen = (socklen_t)sizeof(clientaddr);
 
@@ -91,7 +91,7 @@ int main(int argc, char **argv){
                 Inet_ntop(AF_INET, &clientaddr.sin_addr, client_ip_string,
                         INET_ADDRSTRLEN);
                 
-                printf("server connected to %s (%s)\n", client_hostname, client_ip_string);
+                printf("Slave server connected to %s (%s)\n", client_hostname, client_ip_string);
 
                 // Gestion demande
                 ftp(connfd);

@@ -8,10 +8,10 @@
 
 int main(int argc, char **argv){
 
-    size_t t_nomf;
+    size_t t_nomf, t_nom_serv;
     int code_sortie;
     int clientfd, port;
-    char *host, buf[MAXLINE];
+    char *host, *nom_serv, buf[MAXLINE];
 
     /*
      * Note that the 'host' can be a name or an IP address.
@@ -28,7 +28,19 @@ int main(int argc, char **argv){
      * and the server OS ... but it is possible that the server application
      * has not yet called "Accept" for this connection
      */
-    printf("client connected to server OS\n"); 
+    printf("client connected to master server\n"); 
+
+    // Récuperation du nom de serveur esclave
+    Rio_readn(clientfd, &t_nom_serv, sizeof(size_t));
+    nom_serv = Calloc(t_nom_serv, sizeof(char)*t_nom_serv);
+    Rio_readn(clientfd, nom_serv, t_nom_serv);
+    // Récuperation du numero de port
+    Rio_readn(clientfd, &port, sizeof(int));
+    printf("client connected to slave server\n"); 
+
+    Close(clientfd);
+    // Connexion au serveur esclave
+    clientfd = Open_clientfd(nom_serv, port);
 
     while (fscanf(stdin, "%s", buf) != EOF) {
 
