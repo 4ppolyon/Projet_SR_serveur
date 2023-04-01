@@ -30,7 +30,10 @@ void SIGPIPE_handler(int sig){
 
 void child_handler(int sig){
     int status;
-    while ((pid = waitpid(-1, &status,WNOHANG)) > 0);
+    int res;
+    while ((res = waitpid(-1, &status,WNOHANG)) > 0){
+        pid = res;
+    }
     if (errno != ECHILD && errno != EXIT_SUCCESS)
         unix_error("waitpid error");
 }
@@ -41,7 +44,7 @@ void child_handler(int sig){
  */
 int main(int argc, char **argv){
 
-    int i;
+    int k;
     int listenfd, connfd, port;
     pid_t PID_pere;
     socklen_t clientlen;
@@ -66,13 +69,13 @@ int main(int argc, char **argv){
 
     PID_pere=getpid();
 
+    printf("Ready\n");
     for(int i = 0; i < NB_FILS; i++){
         if ((L_fils[i]=Fork())!=0){
             break;
         }
     }
 
-    printf("Ready\n");
     while(1){
         if (getpid()!=PID_pere){
             while (1) {
@@ -98,6 +101,7 @@ int main(int argc, char **argv){
         }else{
             pause();
             Sigprocmask(SIG_BLOCK, &mask_CHLD, &mask_tmp);
+            fprintf(stderr,"%d\n",pid);
             if (pid != 0){
                 for(k = 0; k<NB_FILS && L_fils[k]!= pid; k++);
                 if (k<NB_FILS){

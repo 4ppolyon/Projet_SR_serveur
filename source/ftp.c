@@ -18,7 +18,7 @@ void ftp(int connfd) {
 
     int f;
     int code_sortie;
-    size_t t_nomf;
+    size_t t_nomf, decal;
     struct stat stat_f;
     off_t buf_off;
     char *buf, path[MAXLINE];
@@ -56,7 +56,7 @@ void ftp(int connfd) {
             Rio_writen(connfd, &buf_off, sizeof(off_t));
 
             //Décalage si il y a déjà des element télécharger (peut etre egal à 0)
-            Rio_readn(connfd, decal, sizeof(off_t));  
+            Rio_readn(connfd, &decal, sizeof(off_t));  
             Lseek(f,decal,SEEK_CUR);
             buf_off = buf_off - decal;
 

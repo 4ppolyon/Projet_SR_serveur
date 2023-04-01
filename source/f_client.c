@@ -26,6 +26,7 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
     off_t contenu_rest, t_bloc = 1000000; // Bloc de 1 Mo
     int nb_bloc;
     char path[300],final_path[300];
+    struct stat stat_f;
 
     int f;
     float t;
@@ -51,7 +52,7 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
     Rio_readn(clientfd, &buf_off, sizeof(off_t));
 
     //Décalage si il y a déjà des element télécharger (peut etre egal à 0)
-    Rio_writen(clientfd, decal, sizeof(off_t));
+    Rio_writen(clientfd, &decal, sizeof(off_t));
     Lseek(f,decal,SEEK_CUR);
     buf_off = buf_off - decal;
 
