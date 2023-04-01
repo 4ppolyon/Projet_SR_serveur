@@ -1,7 +1,3 @@
-/*
- * echoserveri.c - An iterative echo server
- */
-
 #include "csapp.h"
 #include "ftp.h"
 
@@ -51,6 +47,11 @@ int main(int argc, char **argv){
     struct sockaddr_in clientaddr;
     char client_ip_string[INET_ADDRSTRLEN], client_hostname[MAX_NAME_LEN];
     sigset_t mask_CHLD, mask_tmp;
+
+    if (argc < 2) {
+        fprintf (stderr, "Usage:  %s <numero de port>\n", argv[0]);
+        exit(1);
+    }
 
     Sigemptyset(&mask_tmp);
     Sigemptyset(&mask_CHLD);
