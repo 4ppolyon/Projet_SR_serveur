@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <string.h>
 #include "csapp.h"
 
 int gest_erreur(int code_sortie){

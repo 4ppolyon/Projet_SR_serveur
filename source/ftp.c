@@ -19,9 +19,9 @@ void ftp(int connfd) {
     while (1){ /* le fichier n'existe pas */
         strcpy(path,"./serveur_file/");
 
-        // Recupère la taille du nom de fichier
+        // Récupère la taille du nom de fichier
         Rio_readn(connfd, &t_nomf, sizeof(size_t));
-        // Recupère le contenue du socket
+        // Récupère le contenu du socket
         buf = Calloc(t_nomf,sizeof(char)*t_nomf);
         Rio_readn(connfd, buf, sizeof(char)*t_nomf);
 
