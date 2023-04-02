@@ -77,6 +77,7 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
         Rio_readn(clientfd, contenu, contenu_rest);
         // écri le reste du contenue dans le fichier
         Rio_writen(f, contenu, contenu_rest);
+        Free(contenu);
     }
 
     gettimeofday(&end, NULL);
@@ -86,7 +87,6 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
 
     // Libération mémoire
     Close(f);
-    Free(contenu);
     Free(bloc);
 
     // Renomage du fichier
