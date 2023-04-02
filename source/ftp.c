@@ -80,9 +80,9 @@ void ftp(int connfd) {
                 Rio_readn(f, contenu, contenu_rest);
                 // envoie le reste du contenu du fichier
                 Rio_writen(connfd, contenu, contenu_rest);
+                Free(contenu);  
             }
             
-            Free(contenu);
             Free(bloc);
         }
     }
