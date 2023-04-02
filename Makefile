@@ -47,5 +47,5 @@ $(EXEC_serv_slave): $(OBJS) $(OBJPATH)/serveur_esclave.o
 
 
 clean:
-	rm -f  $(EXEC_cli) $(EXEC_serv) $(OBJPATH)/*.o
+	rm -f  $(EXEC_cli) $(EXEC_serv_master) $(EXEC_serv_slave) $(OBJPATH)/*.o
 
