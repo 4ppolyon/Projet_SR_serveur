@@ -9,26 +9,22 @@
 int main(int argc, char **argv){
 
     size_t t_nomf, t_nom_serv;
-    int code_sortie;
+    int code_sortie, code_type;
     int clientfd, port;
     char *host, *nom_serv, buf[MAXLINE];
 
     /*
      * Note that the 'host' can be a name or an IP address.
-     * If necessary, Open_clientfd will perform the name resolution
-     * to obtain the IP address.
      */
     host = "localhost";
     port = 2112;
 
     clientfd = Open_clientfd(host, port);
-    
-    /*
-     * At this stage, the connection is established between the client
-     * and the server OS ... but it is possible that the server application
-     * has not yet called "Accept" for this connection
-     */
     printf("client connected to master server\n"); 
+
+    // Envoie au serveur qu'il est un client
+    code_type = 1;
+    Rio_writen(clientfd, &code_type, sizeof(int));
 
     // Récuperation du nom de serveur esclave
     Rio_readn(clientfd, &t_nom_serv, sizeof(size_t));

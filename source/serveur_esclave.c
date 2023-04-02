@@ -5,6 +5,7 @@
 #define NB_FILS 1
 
 extern int client_down;
+int port;
 pid_t pid;
 
 pid_t L_fils[NB_FILS];
@@ -12,11 +13,18 @@ pid_t L_fils[NB_FILS];
 void ftp(int connfd);
 
 void SIGINT_handler(int sig){
+    char *host ="localhost";
+    int clientfd, code_type, origin_port = 2112;
     Signal(SIGCHLD, SIG_IGN);
     for(int i = 0; i < NB_FILS; i++){
         Kill(L_fils[i], SIGINT);
     }
     while(wait(NULL) > 0);
+    clientfd = Open_clientfd(host, origin_port);
+    code_type = 2;
+    Rio_writen(clientfd, &code_type, sizeof(int));
+    Rio_writen(clientfd, &port, sizeof(int));
+    Close(clientfd);
     exit(0);
 }
 
@@ -40,29 +48,38 @@ void child_handler(int sig){
  */
 int main(int argc, char **argv){
 
-    int k;
-    int listenfd, connfd, port;
+    int k, code_type;
+    int listenfd, connfd, clientfd;
     pid_t PID_pere;
     socklen_t clientlen;
     struct sockaddr_in clientaddr;
+    char *host;
     char client_ip_string[INET_ADDRSTRLEN], client_hostname[MAX_NAME_LEN];
     sigset_t mask_CHLD, mask_tmp;
 
-    if (argc < 2) {
-        fprintf (stderr, "Usage:  %s <numero de port>\n", argv[0]);
-        exit(1);
-    }
+    Signal(SIGPIPE,SIGPIPE_handler);
 
     Sigemptyset(&mask_tmp);
     Sigemptyset(&mask_CHLD);
     Sigaddset(&mask_CHLD, SIGCHLD);
     
-    Signal(SIGCHLD, child_handler);
-    Signal(SIGINT, SIGINT_handler);
-    Signal(SIGPIPE,SIGPIPE_handler);
     pid = 0;
     
-    port = atoi(argv[1]);
+    host = "localhost";
+    port = 2112;
+
+    // Essaye de se connecter au maitre pour recuperer son port pour le serveur et donner son identification
+    clientfd = Open_clientfd(host, port);
+    code_type = 0;
+    Rio_writen(clientfd, &code_type, sizeof(int));
+    Rio_readn(clientfd, &port, sizeof(int));
+    Close(clientfd);
+
+    // Le serveur se ferme si il echoue
+    if(port == -1){
+        printf("No more place with master\n");
+        exit(0);
+    }
 
     clientlen = (socklen_t)sizeof(clientaddr);
 
@@ -79,6 +96,8 @@ int main(int argc, char **argv){
 
     while(1){
         if (getpid()!=PID_pere){
+            Signal(SIGCHLD, child_handler);
+            Signal(SIGINT, SIGINT_handler);
             while (1) {
                 // Vérifie que la connexion est réaliser
                 while((connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen)) == -1);
@@ -103,6 +122,7 @@ int main(int argc, char **argv){
             pause();
             Sigprocmask(SIG_BLOCK, &mask_CHLD, &mask_tmp);
             fprintf(stderr,"%d\n",pid);
+            // Si il y a un enfant de mort, on en recrer un
             if (pid != 0){
                 for(k = 0; k<NB_FILS && L_fils[k]!= pid; k++);
                 if (k<NB_FILS){
