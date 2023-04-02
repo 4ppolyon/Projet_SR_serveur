@@ -51,7 +51,7 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
     gettimeofday(&start, NULL);
     Rio_readn(clientfd, &buf_off, sizeof(off_t));
 
-    //Décalage s'il y a déjà des element télécharger (peut être égal à 0)
+    //Décalage s'il y a déjà des element téléchargés (peut être égal à 0)
     Rio_writen(clientfd, &decal, sizeof(off_t));
     Lseek(f,decal,SEEK_CUR);
     buf_off = buf_off - decal;
@@ -71,11 +71,11 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
     }
 
     if (contenu_rest != 0){
-        // Récupération du reste du contenue du fichier
+        // Récupération du reste du contenu du fichier
         contenu = Malloc(contenu_rest);
-        // lit le reste du contenue
+        // lit le reste du contenu
         Rio_readn(clientfd, contenu, contenu_rest);
-        // écri le reste du contenue dans le fichier
+        // écri le reste du contenu dans le fichier
         Rio_writen(f, contenu, contenu_rest);
         Free(contenu);
     }
