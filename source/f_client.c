@@ -5,10 +5,10 @@
 int gest_erreur(int code_sortie){
     switch(code_sortie){
         case 1 :
-            fprintf(stderr,"Ecriver un nom de fichier\n");
+            fprintf(stderr,"Write a file name:\n");
             break;
         case 2 :
-            fprintf(stderr,"Erreur fichier\n");
+            fprintf(stderr,"File error\nCheck the file name or maybe you don't have the right to access this file.\n\n");
             break;
         default :
             return 0;
@@ -35,14 +35,14 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
     struct timeval start;
     struct timeval end;
     
-    //Initialise le chemin de dépot de fichier masquer
+    //Initialise le chemin de depot de fichier masquer
     strcpy(path, "./client_file/.");
     strcat(path, nom_fichier);
     if ((f = open(path, O_WRONLY, 0)) < 0){
         f = Open(path, O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
         decal = 0;
     }else{
-        // Recupere la taille du fichier temporaire
+        // Récupère la taille du fichier temporaire
         fstat(f,&stat_f);
         decal = stat_f.st_size;
     }
@@ -51,7 +51,7 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
     gettimeofday(&start, NULL);
     Rio_readn(clientfd, &buf_off, sizeof(off_t));
 
-    //Décalage si il y a déjà des element télécharger (peut etre egal à 0)
+    //Décalage s'il y a déjà des element téléchargés (peut être égal à 0)
     Rio_writen(clientfd, &decal, sizeof(off_t));
     Lseek(f,decal,SEEK_CUR);
     buf_off = buf_off - decal;
@@ -61,7 +61,7 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
     contenu_rest = buf_off-(nb_bloc*t_bloc);
 
 
-    // Récuperation des blocs
+    // Recuperation des blocs
     bloc = Malloc(t_bloc);
     for (int i = 0; i<nb_bloc; i++){
         // lit le contenu du bloc 
@@ -71,25 +71,25 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
     }
 
     if (contenu_rest != 0){
-        // Récupération du reste du contenue du fichier
+        // Récupération du reste du contenu du fichier
         contenu = Malloc(contenu_rest);
-        // lit le reste du contenue
+        // lit le reste du contenu
         Rio_readn(clientfd, contenu, contenu_rest);
-        // écri le reste du contenue dans le fichier
+        // écrit le reste du contenu dans le fichier
         Rio_writen(f, contenu, contenu_rest);
         Free(contenu);
     }
-    
+
     gettimeofday(&end, NULL);
-    // Affichage des stats de telechargement
+    // Affichage des stats de téléchargement
     t = time_diff(&start, &end);
-    printf("Download success :\ntime spent: %0.8f sec\nweight = %ld bytes\napprox speed = %f bytes/sec\n", t, buf_off, (buf_off/t));
+    printf("Download success :\ntime spent: %0.8f sec\nweight = %ld bytes\napprox speed = %f bytes/sec\n\n", t, buf_off, (buf_off/t));
 
     // Libération mémoire
     Close(f);
     Free(bloc);
 
-    // Renomage du fichier
+    // Renommage du fichier
     strcpy(final_path, "./client_file/");
     strcat(final_path, nom_fichier);
     rename(path,final_path);

@@ -80,7 +80,7 @@ int main(int argc, char **argv){
     while(1){
         if (getpid()!=PID_pere){
             while (1) {
-                // Vérifie que la connexion est réaliser
+                // Vérifie que la connexion est réalisée
                 while((connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen)) == -1);
                 client_down = 0;
                 
