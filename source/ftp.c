@@ -1,14 +1,6 @@
-/*
- * echo - read and echo text lines until client closes connection
- */
 #include <sys/stat.h>
 #include "csapp.h"
 
-
-            //// test si c'est un repertoire
-            // if (stat_f.st_mode == S_IFDIR){
-            //     continue;
-            // }
 int client_down;
 
 void ftp(int connfd) {
@@ -27,9 +19,9 @@ void ftp(int connfd) {
     while (1){ /* le fichier n'existe pas */
         strcpy(path,"./serveur_file/");
 
-        // Recupère la taille du nom de fichier
+        // Récupère la taille du nom de fichier
         Rio_readn(connfd, &t_nomf, sizeof(size_t));
-        // Recupère le contenue du socket
+        // Récupère le contenu du socket
         buf = Calloc(t_nomf,sizeof(char)*t_nomf);
         Rio_readn(connfd, buf, sizeof(char)*t_nomf);
 
@@ -49,13 +41,13 @@ void ftp(int connfd) {
             Rio_writen(connfd, &code_sortie, sizeof(int));
             Free(buf);
 
-            // Recupere status fichier
+            // Récupère status fichier
             fstat(f,&stat_f);
             buf_off = stat_f.st_size;
             // envoie la taille du fichier
             Rio_writen(connfd, &buf_off, sizeof(off_t));
 
-            //Décalage si il y a déjà des element télécharger (peut etre egal à 0)
+            //Décalage s'il y a déjà des element télécharger (peut etre egal à 0)
             Rio_readn(connfd, &decal, sizeof(off_t));  
             Lseek(f,decal,SEEK_CUR);
             buf_off = buf_off - decal;
@@ -83,6 +75,4 @@ void ftp(int connfd) {
             Free(bloc);
         }
     }
-
-
 }
