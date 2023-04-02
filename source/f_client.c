@@ -5,10 +5,10 @@
 int gest_erreur(int code_sortie){
     switch(code_sortie){
         case 1 :
-            fprintf(stderr,"Ecriver un nom de fichier\n");
+            fprintf(stderr,"Write a file name:\n");
             break;
         case 2 :
-            fprintf(stderr,"Erreur fichier\n");
+            fprintf(stderr,"File error\nCheck the file name or maybe you don't have the right to access this file.\n\n");
             break;
         default :
             return 0;
@@ -37,11 +37,11 @@ void recuperation_fichier(int clientfd, char *path){
     Rio_readn(clientfd, contenu, buf_off);
     gettimeofday(&end, NULL);
     
-    // Affichage des stats de telechargement
+    // Affichage des stats de téléchargement
     t = time_diff(&start, &end);
-    printf("Download success :\ntime spent: %0.8f sec\nweight = %ld bytes\napprox speed = %f bytes/sec\n", t, buf_off, (buf_off/t));
+    printf("Download success :\ntime spent: %0.8f sec\nweight = %ld bytes\napprox speed = %f bytes/sec\n\n", t, buf_off, (buf_off/t));
 
-    // écriture du fichier du fichier
+    // écriture du contenu du fichier
     f = Open(path, O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH); 
     Rio_writen(f, contenu, buf_off);
     Close(f);
