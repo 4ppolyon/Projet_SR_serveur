@@ -73,11 +73,14 @@ void ftp(int connfd) {
                 Rio_writen(connfd, bloc, t_bloc);
             }
 
-            contenu = Malloc(contenu_rest);
-            // lit le reste du contenu du fichier
-            Rio_readn(f, contenu, contenu_rest);
-            // envoie le reste du contenu du fichier
-            Rio_writen(connfd, contenu, contenu_rest);
+            
+            if (contenu_rest != 0){
+                contenu = Malloc(contenu_rest);
+                // lit le reste du contenu du fichier
+                Rio_readn(f, contenu, contenu_rest);
+                // envoie le reste du contenu du fichier
+                Rio_writen(connfd, contenu, contenu_rest);
+            }
             
             Free(contenu);
             Free(bloc);
