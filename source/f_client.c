@@ -70,13 +70,15 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
         Rio_writen(f, bloc, t_bloc);
     }
 
-    // Récupération du reste du contenue du fichier
-    contenu = Malloc(contenu_rest);
-    // lit le reste du contenue
-    Rio_readn(clientfd, contenu, contenu_rest);
-    // écri le reste du contenue dans le fichier
-    Rio_writen(f, contenu, contenu_rest);
-
+    if (contenu_rest != 0){
+        // Récupération du reste du contenue du fichier
+        contenu = Malloc(contenu_rest);
+        // lit le reste du contenue
+        Rio_readn(clientfd, contenu, contenu_rest);
+        // écri le reste du contenue dans le fichier
+        Rio_writen(f, contenu, contenu_rest);
+    }
+    
     gettimeofday(&end, NULL);
     // Affichage des stats de telechargement
     t = time_diff(&start, &end);
