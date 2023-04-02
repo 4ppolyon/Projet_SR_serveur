@@ -11,7 +11,7 @@ int main(int argc, char **argv){
     size_t len, t_nom_serv;
     int code_sortie;
     int clientfd, port;
-    char *host, *nom_serv, buf[MAXLINE];
+    char *host, *nom_serv, buf[300];
 
     /*
      * Note that the 'host' can be a name or an IP address.
