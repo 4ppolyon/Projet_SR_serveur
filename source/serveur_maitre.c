@@ -78,7 +78,7 @@ int main(int argc, char **argv){
                 Rio_writen(connfd, &L_SERV_PORT[slave_turn], sizeof(int));
                 // Change wich slave will work next
                 slave_turn++;
-                if (slave_turn >= nb_slave){
+                if (slave_turn > nb_slave){
                     slave_turn = 0;
                 }
                 Close(connfd);

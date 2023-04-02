@@ -32,11 +32,11 @@ int main(int argc, char **argv){
     Rio_readn(clientfd, nom_serv, t_nom_serv);
     // Récuperation du numero de port
     Rio_readn(clientfd, &port, sizeof(int));
-    printf("client connected to slave server\n"); 
 
     Close(clientfd);
     // Connexion au serveur esclave
     clientfd = Open_clientfd(nom_serv, port);
+    printf("client connected to slave server\n"); 
 
     while (fscanf(stdin, "%s", buf) != EOF) {
 
