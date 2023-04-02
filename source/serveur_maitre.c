@@ -86,6 +86,7 @@ int main(int argc, char **argv){
 
     for(int i = 0; i < NB_SERV; i++){
        strcpy(L_SERV[i], "localhost");
+       printf("port for slave server : %d\n", 2121+i);
        L_SERV_PORT[i] = 2121 + i;
     }    
 
