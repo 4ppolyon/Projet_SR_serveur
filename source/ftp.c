@@ -47,7 +47,7 @@ void ftp(int connfd) {
             // envoie la taille du fichier
             Rio_writen(connfd, &buf_off, sizeof(off_t));
 
-            //Décalage s'il y a déjà des element télécharger (peut etre egal à 0)
+            //Décalage s'il y a déjà des element télécharger (peut être égal à 0)
             Rio_readn(connfd, &decal, sizeof(off_t));  
             Lseek(f,decal,SEEK_CUR);
             buf_off = buf_off - decal;

@@ -71,11 +71,11 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
     }
 
     if (contenu_rest != 0){
-        // Récupération du reste du contenue du fichier
+        // Récupération du reste du contenu du fichier
         contenu = Malloc(contenu_rest);
-        // lit le reste du contenue
+        // lit le reste du contenu
         Rio_readn(clientfd, contenu, contenu_rest);
-        // écri le reste du contenue dans le fichier
+        // écri le reste du contenu dans le fichier
         Rio_writen(f, contenu, contenu_rest);
         Free(contenu);
     }
