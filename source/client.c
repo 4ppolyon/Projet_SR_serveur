@@ -8,7 +8,7 @@
 
 int main(int argc, char **argv){
 
-    size_t t_nomf, t_nom_serv;
+    size_t len, t_nom_serv;
     int code_sortie, code_type;
     int clientfd, port;
     char *host, *nom_serv, buf[MAXLINE];
@@ -32,18 +32,20 @@ int main(int argc, char **argv){
     Rio_readn(clientfd, nom_serv, t_nom_serv);
     // Récuperation du numero de port
     Rio_readn(clientfd, &port, sizeof(int));
-    printf("client connected to slave server\n"); 
 
     Close(clientfd);
     // Connexion au serveur esclave
     clientfd = Open_clientfd(nom_serv, port);
+    printf("client connected to slave server\n");
 
-    while (fscanf(stdin, "%s", buf) != EOF) {
+    while (Fgets(buf, sizeof(buf), stdin) != NULL) {
+        len = strcspn(buf, "\n"); // Trouve la longueur de la chaîne jusqu'au premier '\n'
+        buf[len] = '\0'; // Remplace le '\n' par un caractère nul pour terminer la chaîne
 
         // Envoie la taille du nom de fichier puis le nom de fichier
-        t_nomf=strlen(buf);
-        Rio_writen(clientfd, &t_nomf, sizeof(size_t));
-        Rio_writen(clientfd, buf, t_nomf);
+        Rio_writen(clientfd, &len, sizeof(size_t));
+        Rio_writen(clientfd, buf, len);
+
 
         if (Rio_readn(clientfd, &code_sortie, sizeof(int)) > 0) {
 

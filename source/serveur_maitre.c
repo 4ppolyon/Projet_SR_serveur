@@ -32,7 +32,7 @@ int main(int argc, char **argv){
 
     printf("Ready\n");
     while (1) {
-        // Vérifie que la connexion est réaliser
+        // Vérifie que la connexion est réalisée
         while((connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen)) == -1);
         client_down = 0;
 
@@ -49,8 +49,8 @@ int main(int argc, char **argv){
             case 0 :
                 printf("Master server connected to new slave %s (%s)\n", client_hostname, client_ip_string);
                 nb_slave++;
-                // If there is too much slave, it refuse the connexion
-                // else, it add to the table the slave
+                // If there is too much slave, it refuses the connexion
+                // else, it adds to the table the slave
                 if(nb_slave > NB_MAX_SLAVE){
                     printf("New slave denied\n");
                     nb_slave--;
@@ -78,7 +78,7 @@ int main(int argc, char **argv){
                 Rio_writen(connfd, &L_SERV_PORT[slave_turn], sizeof(int));
                 // Change wich slave will work next
                 slave_turn++;
-                if (slave_turn >= nb_slave){
+                if (slave_turn > nb_slave){
                     slave_turn = 0;
                 }
                 Close(connfd);

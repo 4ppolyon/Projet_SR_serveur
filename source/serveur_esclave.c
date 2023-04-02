@@ -10,8 +10,6 @@ pid_t pid;
 
 pid_t L_fils[NB_FILS];
 
-void ftp(int connfd);
-
 void SIGINT_handler(int sig){
     char *host ="localhost";
     int clientfd, code_type, origin_port = 2112;
@@ -68,14 +66,14 @@ int main(int argc, char **argv){
     host = "localhost";
     port = 2112;
 
-    // Essaye de se connecter au maitre pour recuperer son port pour le serveur et donner son identification
+    // Essaye de se connecter au maitre pour récupérer son port pour le serveur et donner son identification
     clientfd = Open_clientfd(host, port);
     code_type = 0;
     Rio_writen(clientfd, &code_type, sizeof(int));
     Rio_readn(clientfd, &port, sizeof(int));
     Close(clientfd);
 
-    // Le serveur se ferme si il echoue
+    // Le serveur se ferme s'il échoue
     if(port == -1){
         printf("No more place with master\n");
         exit(0);
@@ -99,7 +97,7 @@ int main(int argc, char **argv){
             Signal(SIGCHLD, child_handler);
             Signal(SIGINT, SIGINT_handler);
             while (1) {
-                // Vérifie que la connexion est réaliser
+                // Vérifie que la connexion est réalisée
                 while((connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen)) == -1);
                 client_down = 0;
                 
