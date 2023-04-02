@@ -101,7 +101,6 @@ int main(int argc, char **argv){
         }else{
             pause();
             Sigprocmask(SIG_BLOCK, &mask_CHLD, &mask_tmp);
-            fprintf(stderr,"%d\n",pid);
             if (pid != 0){
                 for(k = 0; k<NB_FILS && L_fils[k]!= pid; k++);
                 if (k<NB_FILS){
