@@ -3,6 +3,8 @@
 #include "csapp.h"
 #include "f_client.h"
 
+#define NOM_HOST "localhost"
+
 int main(int argc, char **argv){
 
     size_t len;
@@ -17,7 +19,7 @@ int main(int argc, char **argv){
      * If necessary, Open_clientfd will perform the name resolution
      * to obtain the IP address.
      */
-    host = "localhost";
+    host = NOM_HOST;
     port = 2112;
 
     clientfd = Open_clientfd(host, port);
