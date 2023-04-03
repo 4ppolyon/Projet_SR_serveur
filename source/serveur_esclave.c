@@ -9,8 +9,6 @@ pid_t pid;
 
 pid_t L_fils[NB_FILS];
 
-void ftp(int connfd);
-
 void SIGINT_handler(int sig){
     Signal(SIGCHLD, SIG_IGN);
     for(int i = 0; i < NB_FILS; i++){

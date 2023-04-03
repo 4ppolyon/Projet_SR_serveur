@@ -6,6 +6,8 @@
 #include "csapp.h"
 #include "f_client.h"
 
+#define NOM_HOST "localhost"
+
 int main(int argc, char **argv){
 
     size_t len, t_nom_serv;
@@ -16,7 +18,7 @@ int main(int argc, char **argv){
     char *host, *nom_serv, buf[300];
 
     /* Note that the 'host' can be a name or an IP address.*/
-    host = "localhost";
+    host = NOM_HOST;
     port = 2112;
 
     clientfd = Open_clientfd(host, port);
