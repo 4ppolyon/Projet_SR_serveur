@@ -52,10 +52,12 @@ void child_handler(int sig){
  */
 int main(int argc, char **argv){
 
-    int k;
-    int listenfd, connfd, port;
+    int k, port;
+    uint16_t net_port;
+    int listenfd, connfd;
     int L_SERV_PORT[NB_SERV];
-    size_t t_nom_ser;
+    size_t t_nom_serv;
+    int32_t net_t_nom_serv;
     socklen_t clientlen;
     struct sockaddr_in clientaddr;
     char client_ip_string[INET_ADDRSTRLEN], client_hostname[MAX_NAME_LEN], L_SERV[NB_SERV][MAX_NAME_LEN];
@@ -115,10 +117,12 @@ int main(int argc, char **argv){
                 printf("Master server connected to %s (%s)\n", client_hostname, client_ip_string);
 
                 // Gestion demande
-                t_nom_ser = strlen(L_SERV[slave_turn]);
-                Rio_writen(connfd, &t_nom_ser, sizeof(size_t));
-                Rio_writen(connfd, L_SERV[slave_turn], t_nom_ser);
-                Rio_writen(connfd, &L_SERV_PORT[slave_turn], sizeof(int));
+                t_nom_serv = strlen(L_SERV[slave_turn]);
+                net_t_nom_serv = htonl(t_nom_serv);
+                Rio_writen(connfd, &net_t_nom_serv, sizeof(uint32_t));
+                Rio_writen(connfd, L_SERV[slave_turn], t_nom_serv);
+                net_port = htons(L_SERV_PORT[slave_turn]);
+                Rio_writen(connfd, &net_port, sizeof(uint16_t));
                 Kill(PID_pere,SIGUSR1);
                 Close(connfd);
             }

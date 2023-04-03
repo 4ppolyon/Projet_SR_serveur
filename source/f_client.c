@@ -31,28 +31,31 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
     int f;
     float t;
     off_t buf_off, decal;
+    uint32_t net_buf_off, net_decal;
     void *contenu, *bloc;
     struct timeval start;
     struct timeval end;
     
-    //Initialise le chemin de depot de fichier masquer
+    //Initialise le chemin de dépot de fichier masquer
     strcpy(path, "./client_file/.");
     strcat(path, nom_fichier);
     if ((f = open(path, O_WRONLY, 0)) < 0){
         f = Open(path, O_TRUNC | O_WRONLY | O_CREAT, S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
         decal = 0;
     }else{
-        // Récupère la taille du fichier temporaire
+        // Recupere la taille du fichier temporaire
         fstat(f,&stat_f);
         decal = stat_f.st_size;
     }
 
     // Téléchargement de la taille du fichier
     gettimeofday(&start, NULL);
-    Rio_readn(clientfd, &buf_off, sizeof(off_t));
+    Rio_readn(clientfd, &net_buf_off, sizeof(off_t));
+    buf_off = htonl(net_buf_off);
 
     //Décalage s'il y a déjà des element téléchargés (peut être égal à 0)
-    Rio_writen(clientfd, &decal, sizeof(off_t));
+    net_decal = htonl(decal);
+    Rio_writen(clientfd, &net_decal, sizeof(off_t));
     Lseek(f,decal,SEEK_CUR);
     buf_off = buf_off - decal;
 
@@ -61,7 +64,7 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
     contenu_rest = buf_off-(nb_bloc*t_bloc);
 
 
-    // Recuperation des blocs
+    // Récuperation des blocs
     bloc = Malloc(t_bloc);
     for (int i = 0; i<nb_bloc; i++){
         // lit le contenu du bloc 
@@ -75,13 +78,13 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
         contenu = Malloc(contenu_rest);
         // lit le reste du contenu
         Rio_readn(clientfd, contenu, contenu_rest);
-        // écrit le reste du contenu dans le fichier
+        // écri le reste du contenu dans le fichier
         Rio_writen(f, contenu, contenu_rest);
         Free(contenu);
     }
 
     gettimeofday(&end, NULL);
-    // Affichage des stats de téléchargement
+    // Affichage des stats de telechargement
     t = time_diff(&start, &end);
     printf("Download success :\ntime spent: %0.8f sec\nweight = %ld bytes\napprox speed = %f bytes/sec\n\n", t, buf_off, (buf_off/t));
 
@@ -89,7 +92,7 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
     Close(f);
     Free(bloc);
 
-    // Renommage du fichier
+    // Renomage du fichier
     strcpy(final_path, "./client_file/");
     strcat(final_path, nom_fichier);
     rename(path,final_path);
