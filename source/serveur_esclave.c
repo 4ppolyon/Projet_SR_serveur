@@ -11,7 +11,7 @@ pid_t pid;
 pid_t L_fils[NB_FILS];
 
 void SIGINT_handler(int sig){
-    char *host ="localhost";
+    char *host ="f217-03";
     int clientfd, code_type, origin_port = 2112;
     Signal(SIGCHLD, SIG_IGN);
     for(int i = 0; i < NB_FILS; i++){
@@ -56,14 +56,16 @@ int main(int argc, char **argv){
     sigset_t mask_CHLD, mask_tmp;
 
     Signal(SIGPIPE,SIGPIPE_handler);
-
+    Signal(SIGCHLD, child_handler);
+    Signal(SIGINT, SIGINT_handler);
+    
     Sigemptyset(&mask_tmp);
     Sigemptyset(&mask_CHLD);
     Sigaddset(&mask_CHLD, SIGCHLD);
     
     pid = 0;
     
-    host = "localhost";
+    host = "f217-03";
     port = 2112;
 
     // Essaye de se connecter au maitre pour récupérer son port pour le serveur et donner son identification
@@ -94,8 +96,6 @@ int main(int argc, char **argv){
 
     while(1){
         if (getpid()!=PID_pere){
-            Signal(SIGCHLD, child_handler);
-            Signal(SIGINT, SIGINT_handler);
             while (1) {
                 // Vérifie que la connexion est réalisée
                 while((connfd = Accept(listenfd, (SA *)&clientaddr, &clientlen)) == -1);

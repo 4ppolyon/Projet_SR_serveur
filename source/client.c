@@ -16,7 +16,7 @@ int main(int argc, char **argv){
     /*
      * Note that the 'host' can be a name or an IP address.
      */
-    host = "localhost";
+    host = "f217-03";
     port = 2112;
 
     clientfd = Open_clientfd(host, port);
