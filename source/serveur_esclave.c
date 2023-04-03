@@ -3,6 +3,7 @@
 
 #define MAX_NAME_LEN 256
 #define NB_FILS 1
+#define NOM_HOST "localhost"
 
 extern int client_down;
 int port;
@@ -11,7 +12,7 @@ pid_t pid;
 pid_t L_fils[NB_FILS];
 
 void SIGINT_handler(int sig){
-    char *host ="f217-03";
+    char *host = NOM_HOST;
     int clientfd, code_type, origin_port = 2112;
     uint16_t net_code_type, net_port;
     Signal(SIGCHLD, SIG_IGN);
@@ -70,7 +71,7 @@ int main(int argc, char **argv){
     
     pid = 0;
     
-    host = "localhost";
+    host = NOM_HOST;
     port = 2112;
 
     // Essaye de se connecter au maitre pour récupérer son port pour le serveur et donner son identification
