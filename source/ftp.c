@@ -46,11 +46,6 @@ void ftp(int connfd) {
             buf_off = stat_f.st_size;
             contenu = Malloc(buf_off);
 
-            //test si c'est un repertoire
-            // if (stat_f.st_mode == S_IFDIR){
-            //     continue;
-            // }
-            
             // envoie la taille du fichier
             Rio_writen(connfd, &buf_off, sizeof(off_t));
             // lit le contenu du fichier
@@ -60,6 +55,4 @@ void ftp(int connfd) {
             Free(contenu);
         }
     }
-
-
 }
