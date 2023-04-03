@@ -1,6 +1,3 @@
-/*
- * echoclient.c - An echo client
- */
 #include <stdio.h>
 #include <string.h>
 #include "csapp.h"
@@ -9,7 +6,9 @@
 int main(int argc, char **argv){
 
     size_t len;
+    uint32_t net_len;
     int code_sortie;
+    uint16_t net_code_sortie;
     int clientfd, port;
     char *host, buf[300], path[MAXLINE];
 
@@ -38,10 +37,12 @@ int main(int argc, char **argv){
         strcpy(path,"./client_file/");
 
         // Envoie la taille du nom de fichier puis le nom de fichier
-        Rio_writen(clientfd, &len, sizeof(size_t));
+        net_len = htonl(len);
+        Rio_writen(clientfd, &net_len, sizeof(uint32_t));
         Rio_writen(clientfd, buf, len);
 
-        if (Rio_readn(clientfd, &code_sortie, sizeof(int)) > 0) {
+        if (Rio_readn(clientfd, &net_code_sortie, sizeof(uint16_t)) > 0) {
+            code_sortie = ntohs(net_code_sortie);
 
             if (gest_erreur(code_sortie) == 0){
                 strcat(path,buf);

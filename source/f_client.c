@@ -25,13 +25,15 @@ void recuperation_fichier(int clientfd, char *path){
     int f;
     float t;
     off_t buf_off;
+    uint32_t net_buf_off;
     void *contenu;
     struct timeval start;
     struct timeval end;
 
     // Téléchargement du fichier
     gettimeofday(&start, NULL);
-    Rio_readn(clientfd, &buf_off, sizeof(off_t));
+    Rio_readn(clientfd, &net_buf_off, sizeof(uint32_t));
+    buf_off = ntohl(net_buf_off);
     contenu = Malloc(buf_off);
     Rio_readn(clientfd, contenu, buf_off);
     gettimeofday(&end, NULL);
