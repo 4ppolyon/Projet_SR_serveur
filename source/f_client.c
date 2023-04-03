@@ -31,6 +31,7 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
     int f;
     float t;
     off_t buf_off, decal;
+    uint32_t net_buf_off, net_decal;
     void *contenu, *bloc;
     struct timeval start;
     struct timeval end;
@@ -49,10 +50,12 @@ void recuperation_fichier(int clientfd, char *nom_fichier){
 
     // Téléchargement de la taille du fichier
     gettimeofday(&start, NULL);
-    Rio_readn(clientfd, &buf_off, sizeof(off_t));
+    Rio_readn(clientfd, &net_buf_off, sizeof(off_t));
+    buf_off = htonl(net_buf_off);
 
     //Décalage s'il y a déjà des element téléchargés (peut être égal à 0)
-    Rio_writen(clientfd, &decal, sizeof(off_t));
+    net_decal = htonl(decal);
+    Rio_writen(clientfd, &net_decal, sizeof(off_t));
     Lseek(f,decal,SEEK_CUR);
     buf_off = buf_off - decal;
 
