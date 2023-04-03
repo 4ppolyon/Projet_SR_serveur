@@ -88,7 +88,7 @@ int main(int argc, char **argv){
 
 
     // Le serveur se ferme s'il échoue
-    if(port == -1){
+    if(port == 0){
         printf("No more place with master\n");
         exit(0);
     }

@@ -59,7 +59,7 @@ int main(int argc, char **argv){
                 if(nb_slave > NB_MAX_SLAVE){
                     printf("New slave denied\n");
                     nb_slave--;
-                    port = -1;
+                    port = 0;
                     net_port = htons(port);
                     Rio_writen(connfd,&net_port,sizeof(uint16_t));
                 }else{
