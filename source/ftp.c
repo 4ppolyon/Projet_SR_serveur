@@ -1,6 +1,3 @@
-/*
- * echo - read and echo text lines until client closes connection
- */
 #include <sys/stat.h>
 #include "csapp.h"
 
@@ -13,9 +10,12 @@ void ftp(int connfd) {
 
     int f;
     int code_sortie;
-    size_t t_nomf, decal;
+    uint16_t net_code_sortie;
+    size_t t_nomf;
+    uint32_t net_t_nomf;
     struct stat stat_f;
-    off_t buf_off;
+    off_t buf_off, decal;
+    uint32_t net_buf_off, net_decal;
     char *buf, path[MAXLINE];
     void *contenu, *bloc;
 
@@ -23,7 +23,8 @@ void ftp(int connfd) {
         strcpy(path,"./serveur_file/");
 
         // Récupère la taille du nom de fichier
-        Rio_readn(connfd, &t_nomf, sizeof(size_t));
+        Rio_readn(connfd, &net_t_nomf, sizeof(size_t));
+        t_nomf = ntohl(net_t_nomf);
         // Récupère le contenu du socket
         buf = Calloc(t_nomf,sizeof(char)*t_nomf);
         Rio_readn(connfd, buf, sizeof(char)*t_nomf);
@@ -33,25 +34,31 @@ void ftp(int connfd) {
             return;
         }else if ((strlen(buf) == 0)) {
             code_sortie = 1;
-            Rio_writen(connfd, &code_sortie, sizeof(int));
+            net_code_sortie = htons(code_sortie);
+            Rio_writen(connfd, &net_code_sortie, sizeof(uint16_t));
             Free(buf);
         }else if ((f = open(path, O_RDONLY, 0)) < 0) {
             code_sortie = 2;
-            Rio_writen(connfd, &code_sortie, sizeof(int));
+            net_code_sortie = htons(code_sortie);
+            Rio_writen(connfd, &net_code_sortie, sizeof(uint16_t));
             Free(buf);
         }else {
             code_sortie = 0;
-            Rio_writen(connfd, &code_sortie, sizeof(int));
+            net_code_sortie = htons(code_sortie);
+            Rio_writen(connfd, &net_code_sortie, sizeof(uint16_t));
             Free(buf);
 
             // Récupère status fichier
             fstat(f,&stat_f);
             buf_off = stat_f.st_size;
+
             // envoie la taille du fichier
-            Rio_writen(connfd, &buf_off, sizeof(off_t));
+            net_buf_off = htonl(buf_off);
+            Rio_writen(connfd, &net_buf_off, sizeof(off_t));
 
             //Décalage s'il y a déjà des element télécharger (peut être égal à 0)
-            Rio_readn(connfd, &decal, sizeof(off_t));  
+            Rio_readn(connfd, &net_decal, sizeof(off_t));  
+            decal = ntohl(net_decal);
             Lseek(f,decal,SEEK_CUR);
             buf_off = buf_off - decal;
 
@@ -68,19 +75,16 @@ void ftp(int connfd) {
                 Rio_writen(connfd, bloc, t_bloc);
             }
 
-            
             if (contenu_rest != 0){
                 contenu = Malloc(contenu_rest);
                 // lit le reste du contenu du fichier
                 Rio_readn(f, contenu, contenu_rest);
                 // envoie le reste du contenu du fichier
                 Rio_writen(connfd, contenu, contenu_rest);
-                Free(contenu);  
+                Free(contenu);
             }
             
             Free(bloc);
         }
     }
-
-
 }

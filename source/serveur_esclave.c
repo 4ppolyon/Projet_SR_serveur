@@ -13,15 +13,19 @@ pid_t L_fils[NB_FILS];
 void SIGINT_handler(int sig){
     char *host ="f217-03";
     int clientfd, code_type, origin_port = 2112;
+    uint16_t net_code_type, net_port;
     Signal(SIGCHLD, SIG_IGN);
     for(int i = 0; i < NB_FILS; i++){
         Kill(L_fils[i], SIGINT);
     }
     while(wait(NULL) > 0);
+    // Annonce au client que l'esclave meurt
     clientfd = Open_clientfd(host, origin_port);
     code_type = 2;
-    Rio_writen(clientfd, &code_type, sizeof(int));
-    Rio_writen(clientfd, &port, sizeof(int));
+    net_code_type = htons(code_type);
+    Rio_writen(clientfd, &net_code_type, sizeof(uint16_t));
+    net_port = htons(port);
+    Rio_writen(clientfd, &net_port, sizeof(uint16_t));
     Close(clientfd);
     exit(0);
 }
@@ -47,6 +51,7 @@ void child_handler(int sig){
 int main(int argc, char **argv){
 
     int k, code_type;
+    uint16_t net_code_type, net_port; 
     int listenfd, connfd, clientfd;
     pid_t PID_pere;
     socklen_t clientlen;
@@ -65,15 +70,22 @@ int main(int argc, char **argv){
     
     pid = 0;
     
-    host = "f217-03";
+    host = "localhost";
     port = 2112;
 
     // Essaye de se connecter au maitre pour récupérer son port pour le serveur et donner son identification
     clientfd = Open_clientfd(host, port);
     code_type = 0;
-    Rio_writen(clientfd, &code_type, sizeof(int));
-    Rio_readn(clientfd, &port, sizeof(int));
+    net_code_type = htons(code_type);
+    Rio_writen(clientfd, &net_code_type, sizeof(uint16_t));
+    
+    // Récupere le port
+    Rio_readn(clientfd, &net_port, sizeof(uint16_t));
+    port = ntohs(net_port);
+    
+    // Ferme la connexion
     Close(clientfd);
+
 
     // Le serveur se ferme s'il échoue
     if(port == -1){

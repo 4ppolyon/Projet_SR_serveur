@@ -12,10 +12,12 @@ int slave_turn, nb_slave;
  */
 int main(int argc, char **argv){
 
-    int code_type, k, num_port;
-    int listenfd, connfd, port;
+    int code_type, k, num_port, port;
+    uint16_t net_code_type, net_port;
+    int listenfd, connfd;
     int L_SERV_PORT[NB_MAX_SLAVE];
-    size_t t_nom_ser;
+    size_t t_nom_serv;
+    int32_t net_t_nom_serv;
     socklen_t clientlen;
     struct sockaddr_in clientaddr;
     char client_ip_string[INET_ADDRSTRLEN], client_hostname[MAX_NAME_LEN], L_SERV[NB_MAX_SLAVE][MAX_NAME_LEN];
@@ -43,7 +45,10 @@ int main(int argc, char **argv){
         Inet_ntop(AF_INET, &clientaddr.sin_addr, client_ip_string, INET_ADDRSTRLEN);
 
         // Recupere le type de connexion
-        Rio_readn(connfd, &code_type, sizeof(int));
+        Rio_readn(connfd, &net_code_type, sizeof(uint16_t));
+        code_type = ntohs(net_code_type);
+
+        // Traitement selon le type de connexion
         switch(code_type){
             // If the connexion is defined as a new slave
             case 0 :
@@ -55,14 +60,16 @@ int main(int argc, char **argv){
                     printf("New slave denied\n");
                     nb_slave--;
                     port = -1;
-                    Rio_writen(connfd,&port,sizeof(int));
+                    net_port = htons(port);
+                    Rio_writen(connfd,&net_port,sizeof(uint16_t));
                 }else{
                     printf("New slave accepted\n");
                     num_port++;
                     port = num_port;
                     strcpy(L_SERV[nb_slave-1],client_hostname);
                     L_SERV_PORT[nb_slave-1]=port;
-                    Rio_writen(connfd,&port,sizeof(int));
+                    net_port = htons(port);
+                    Rio_writen(connfd,&net_port,sizeof(uint16_t));
                 }
                 Close(connfd);
                 break;
@@ -72,10 +79,13 @@ int main(int argc, char **argv){
                 printf("Master server connected to client %s (%s)\n", client_hostname, client_ip_string);
 
                 // Give the client a slave server
-                t_nom_ser = strlen(L_SERV[slave_turn]);
-                Rio_writen(connfd, &t_nom_ser, sizeof(size_t));
-                Rio_writen(connfd, L_SERV[slave_turn], t_nom_ser);
-                Rio_writen(connfd, &L_SERV_PORT[slave_turn], sizeof(int));
+                t_nom_serv = strlen(L_SERV[slave_turn]);
+                net_t_nom_serv = htonl(t_nom_serv);
+                Rio_writen(connfd, &net_t_nom_serv, sizeof(uint32_t));
+                Rio_writen(connfd, L_SERV[slave_turn], t_nom_serv);
+                net_port = htons(L_SERV_PORT[slave_turn]);
+                Rio_writen(connfd, &net_port, sizeof(uint16_t));
+
                 // Change wich slave will work next
                 slave_turn++;
                 if (slave_turn >= nb_slave){
@@ -87,7 +97,9 @@ int main(int argc, char **argv){
             // If the connexion is defined as a closing slave
             case 2:
                 printf("Connecting to dying slave %s (%s)\n", client_hostname, client_ip_string);
-                Rio_readn(connfd, &port, sizeof(int));
+                // Recupere le port de l'esclave mourrant
+                Rio_readn(connfd, &net_port, sizeof(uint16_t));
+                port = ntohs(net_port);
                 for(k = 0; k<nb_slave; k++){
                     // Find the slave in the table
                     if(!strcmp(L_SERV[k],client_hostname) && L_SERV_PORT[k] == port){
@@ -101,6 +113,8 @@ int main(int argc, char **argv){
                         break;
                     }
                 }
+                Close(connfd);
+                break;
         }
     }
     exit(0);
